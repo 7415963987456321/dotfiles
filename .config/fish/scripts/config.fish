@@ -1,0 +1,1 @@
+/home/keli/.config/fish/config.fish
