@@ -1,0 +1,281 @@
+##################
+# sway config file
+##################
+set $lock ~/.config/sway/scripts/lock.sh 
+set $grim ~/.config/sway/scripts/grim.sh
+set $slurp ~/.config/sway/scripts/slurp.sh
+set $mod alt
+set $left h
+set $down j
+set $up k
+set $right l
+set $term alacritty
+set $browser luakit
+set $menu dmenu_run
+set $sleep systemctl hybrid-sleep
+set $wallpaperchange ~/.config/sway/scripts/bg.sh
+
+# Code bindings 
+# code:49 = grave 
+# code:135 = compose 
+bindcode 49 exec $menu 
+
+# Options # 
+font pango: Hack:style=Regular 8 
+
+# Window borders 
+default_border pixel 1 
+#hide_edge_borders smart 
+
+# Set colors
+set $bg #171717
+set $fg #eff1f5
+set $br #ffcc00
+set $ia #232425
+
+
+# class                 border  backgr. text    indicator child_border
+client.focused          $br     $br     $fg     $bg       $br
+client.focused_inactive $bg     $bg     $fg     $bg       $bg
+client.unfocused        $bg     $bg     $fg     $bg       $bg
+#client.urgent          $br     $br     $fg     $bg       $br #currently not implemented
+#client.placeholder     $br     $br     $fg     $bg       $br #currently not implemented
+client.background $bg
+
+gaps inner 0
+gaps outer 0
+#smart_gaps on
+
+# Status Bar
+# ----------------------------------------------------------------------------
+
+bar {
+    position bottom
+	#status_command /usr/bin/i3status-rs /home/keli/.config/i3status-rs/config.toml
+    colors {
+        statusline #55cccccc
+        background #323232cc
+        focused_workspace  #323232 #3c74b7 #ffffff
+        active_workspace   #323232 #3c74b750 #cccccc 
+        inactive_workspace #323232 #3c3c3c #7c7c7c
+    }
+}
+
+# Output configuration
+# ----------------------------------------------------------------------------
+
+# Displays
+# output * bg #2b303b solid_color
+# Default Wallpaper
+output * bg ~/.config/sway/bg/bg.jpg stretch
+
+output eDP-1 resolution 1920x1080 position 0,0
+output DP-1 resolution 1360x768 position 1920,0
+output HDMI-A-1 resolution 1920x1080 position 3840,0
+
+# Workspaces
+workspace 1 output eDP-1
+workspace 2 output eDP-1
+workspace 10 output eDP-1
+
+workspace 4 output DP-1
+workspace 6 output DP-1
+workspace 8 output DP-1
+
+workspace 3 output HDMI-A-1
+workspace 5 output HDMI-A-1
+workspace 7 output HDMI-A-1
+workspace 9 output HDMI-A-1
+
+# Input configuration
+# ----------------------------------------------------------------------------
+
+input "1739:32183:SYNA7DB5:00_06CB:7DB7_Touchpad" {
+    dwt enabled 
+	tap enabled 
+	natural_scroll disabled 
+	middle_emulation disabled
+}
+input "1:1:AT_Translated_Set_2_keyboard" {
+	xkb_numlock enabled
+	repeat_delay 250
+	repeat_rate 20
+}
+
+#Idle config
+# ----------------------------------------------------------------------------
+exec swayidle \
+	timeout 700 '$lock' \
+	timeout 900 'swaymsg "output * dpms off"' \
+		resume 'swaymsg "output * dpms on"' \
+	before-sleep '$lock'
+
+# Bindings
+# ----------------------------------------------------------------------------
+
+# Change wallpaper
+bindsym $mod+c exec $wallpaperchange
+# Start a terminal
+bindsym $mod+Return exec $term
+
+# Open browser window
+bindsym $mod+z exec $browser
+
+# Kill window
+bindsym $mod+Shift+q kill
+
+#Take a screenshot
+bindsym Print exec $grim
+bindsym $mod+Print exec $slurp
+
+# Application launch
+bindsym $mod+d exec $menu
+bindsym grave exec $menu
+
+# Drag floating windows by holding down $mod and left mouse button.
+# Resize them with right mouse button + $mod.
+# Mouse button for dragging.
+floating_modifier $mod normal
+
+# Reload configuration file
+bindsym $mod+Shift+c reload
+
+# Exit sway (logs you out of your wayland session)
+bindsym $mod+Shift+e exit
+bindsym $mod+Shift+p exec $sleep
+bindsym $mod+p exec $lock
+
+
+# Moving around:
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+# or use $mod+[up|down|left|right]
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# _move_ the focused window with the same, but add Shift
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+# ditto, with arrow keys
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+
+# Workspaces
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# Worspace back and forth
+bindsym $mod+u workspace back_and_forth
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# Layout stuff
+# Split current object of your focus
+bindsym $mod+b splith
+bindsym $mod+v splitv
+
+# Switch the current container between different layout styles
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+o floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+
+# move focus to the parent container
+bindsym $mod+a focus parent
+
+# Scratchpad
+# Move the currently focused window to the scratchpad
+bindsym $mod+shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $mod+minus scratchpad show
+
+# Resizing containers
+mode "resize" {
+    bindsym $left resize shrink width 10 px or 10 ppt
+    bindsym $down resize grow height 10 px or 10 ppt
+    bindsym $up resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Window specifics
+#
+for_window [title="feh"] floating enable
+for_window [title="feh"] resize set 600 400
+
+
+
+# Media controls
+# ----------------------------------------------------------------------------
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') -5%
+bindsym XF86AudioMute exec pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle
+
+# Sreen brightness controls
+bindsym XF86MonBrightnessDown exec dsplight down 5
+bindsym XF86MonBrightnessUp exec dsplight up 5
+
+# Touchpad toggles
+#bindsym XF86TouchpadToggle exec ~/.config/sway/scripts/toggletouchpad.sh # toggle touchpad
+
+# Media player controls
+#bindsym XF86AudioPlay exec playerctl play
+#bindsym XF86AudioPause exec playerctl pause
+#bindsym XF86AudioNext exec playerctl next
+#bindsym XF86AudioPrev exec playerctl previous
+
+# End customization
+# ----------------------------------------------------------------------------
+
+include /etc/sway/config.d/*
+# read Xresources file
+exec xrdb ~/.Xresources
+exec $wallpaperchange
