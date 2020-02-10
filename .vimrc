@@ -79,6 +79,7 @@ command Reload execute ":source $MYVIMRC"
 let mapleader = " "
 nmap <silent> <leader>w :w<CR>
 nmap <silent> <leader>q :q<CR>
+nmap <silent> <leader>o :Explore<CR>
 nmap <silent> <leader>v :Vexplore<CR>
 nmap <silent> <leader>b :Sex<CR>  "HUEHUEHUE
 nmap <silent> <Leader>g :ALEGoToDefinition<CR>
