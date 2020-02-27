@@ -94,6 +94,7 @@ alias gc='git checkout'
 alias gcm='git checkout master'
 alias gb='git branch'
 alias gs='git stash'
+
 alias mus='n /run/media/keli/TunaFish/Music'
 
 #status --is-interactive; and . (jump shell | psub)
