@@ -60,6 +60,8 @@ export EDITOR=vim
 export XKB_DEFAULT_LAYOUT=is
 export SWAY_CURSOR_THEME=whiteglass
 export _JAVA_AWT_WM_NONREPARENTING=1
+export LANG=is_IS.UTF-8
+export FZF_DEFAULT_COMMAND='fd --type f'
 
 set -xU LESS_TERMCAP_md (printf "\e[01;31m")
 set -xU LESS_TERMCAP_me (printf "\e[0m")
@@ -73,6 +75,7 @@ setxkbmap is
 
 ### ALIAS
 #alias n=nnn
+alias mk=touch
 alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
 alias Syu='sudo pacman -Syu'
 alias S='sudo pacman -S'
@@ -96,5 +99,3 @@ alias gb='git branch'
 alias gs='git stash'
 
 alias mus='n /run/media/keli/TunaFish/Music'
-
-#status --is-interactive; and . (jump shell | psub)

@@ -1,23 +1,19 @@
-" ██╗   ██╗██╗███╗   ███╗
-" ██║   ██║██║████╗ ████║
-" ██║   ██║██║██╔████╔██║
-" ╚██╗ ██╔╝██║██║╚██╔╝██║
-"  ╚████╔╝ ██║██║ ╚═╝ ██║
-"   ╚═══╝  ╚═╝╚═╝     ╚═╝
+"  _ ____   _(_)_ __ ___
+" | '_ \ \ / / | '_ ` _ \
+" | | | \ V /| | | | | | |
+" |_| |_|\_/ |_|_| |_| |_|
+
 
 "Plugin dót
 call plug#begin('~/.vim/plugged')
     Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
-    Plug 'w0rp/ale'
     Plug 'itchyny/lightline.vim'
     Plug 'tpope/vim-commentary'
     Plug 'lervag/vimtex'
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
     Plug 'junegunn/fzf.vim'
     Plug 'machakann/vim-sandwich'
-    Plug 'Shougo/deoplete.nvim'
-        Plug 'roxma/nvim-yarp'
-        Plug 'roxma/vim-hug-neovim-rpc'
     Plug 'tpope/vim-vinegar'
     Plug 'junegunn/vim-peekaboo' " maybe
     Plug 'mg979/vim-xtabline'    " TESTING
@@ -41,9 +37,7 @@ inoremap <C-E> <ESC>])a
 xnoremap n :norm 
 xnoremap <C-J> }
 xnoremap <C-K> {
-nnoremap gG ggVG
 
-set ttymouse=xterm " Helvítis tmux
 set mouse=a        " Helvítis tmux
 set nowrap
 set lazyredraw      " wtf
@@ -68,20 +62,19 @@ set timeoutlen=400
 set list
 set listchars=trail:␣,extends:→,tab:>\ 
 set backspace=indent,eol,start
-set noesckeys
 set noshowmode
 set laststatus=2
 set formatoptions+=j
 set virtualedit+=block
 
-" Colors (15, 22, 23, 233?)
+" Colors (12, 15, 22, 23, 233?)
 augroup Colors
     autocmd!
     autocmd ColorScheme fromthehell highlight IncSearch guibg=green ctermbg=green term=underline
-                \ | highlight Normal     ctermfg=23   ctermbg=0       cterm=NONE
-                \ | highlight Visual     ctermfg=NONE ctermbg=23      ctermfg=15
-                \ | highlight CursorLine ctermbg=NONE cterm=underline
-                \ | highlight MatchParen ctermfg=1    ctermbg=NONE    cterm=underline,bold
+                \ | highlight Normal     ctermfg=23    ctermbg=0       cterm=NONE
+                \ | highlight Visual     cterm=NONE    ctermbg=23      ctermfg=15
+                \ | highlight CursorLine ctermbg=NONE  cterm=underline
+                \ | highlight MatchParen ctermfg=1     ctermbg=NONE    cterm=underline,bold
                 \ | highlight Cursor     cterm=reverse
 colorscheme fromthehell
 
@@ -115,9 +108,6 @@ nmap <silent> <leader>q :q<CR>
 nmap <silent> <leader>o :Explore<CR>
 nmap <silent> <leader>v :Vexplore<CR>
 nmap <silent> <leader>b :Sex<CR>  " HUEHUEHUE
-nmap <silent> <Leader>g :ALEGoToDefinition<CR>
-nmap <silent> <Leader>G :ALEGoToDefinitionInSplit<CR>
-nmap <silent> <Leader>f :ALEFindReferences<CR>
 
 " FZF settings
 let g:fzf_buffers_jump = 1
@@ -152,10 +142,6 @@ nnoremap <silent> <leader>t     :Texplore<CR>
 nnoremap <C-ScrollWheelUp>   3<C-W>-
 nnoremap <C-ScrollWheelDown> 3<C-W>+
 
-" Deoplete Stillingar
-let g:deoplete#enable_at_startup = 1
-call deoplete#custom#var('clangx', 'clang_binary', '/usr/bin/clang')
-
 "Tab completion takki á tab
 inoremap <expr> <Tab>   tabcomp#Tab_Or_Complete()
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -188,9 +174,39 @@ let g:lightline.tabline = {
             \ 'left':  [ [ 'tabs' ] ],
             \ 'right': [ [ ''     ] ]  }
 
-" ALE settings
-let g:ale_set_highlights = 0
-let g:ale_lint_on_save   = 1
+" " ALE settings
+" let g:ale_set_highlights = 0
+" let g:ale_lint_on_save   = 1
+
+" CoC stillingar
+let g:coc_global_extensions = [
+            \ 'coc-tsserver',
+            \ 'coc-eslint',
+            \ 'coc-java',
+            \ 'coc-json',
+            \ 'coc-clangd',
+            \ 'coc-rls',
+            \ ]
+
+" \ 'coc-clang', " Fix error?
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> <leader>N <Plug>(coc-diagnostic-prev)
+nmap <silent> <leader>n <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> <leader> g <Plug>(coc-definition)
+nmap <silent> <leader> f <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    else
+        call CocAction('doHover')
+    endif
+endfunction
 
 "LaTeX stillingar
 let g:tex_flavor                 = 'latex'
@@ -199,11 +215,6 @@ let g:vimtex_fold_manual         = 1
 let g:vimtex_latexmk_continuous  = 1
 let g:vimtex_compiler_progname   = 'latexmk'
 let g:vimtex_view_general_viewer = 'zathura'
-
-" Deoplete completion fyrir vimtex
-call deoplete#custom#var('omni', 'input_patterns', {
-        \ 'tex': g:vimtex#re#deoplete
-        \})
 
 let g:vimtex_compiler_latexmk = {
         \ 'options' : [
@@ -220,7 +231,6 @@ let g:vimtex_compiler_latexmk = {
 \}
 
 " FUNCTIONS:
-" Strip extra whitespace.
 function! Strip()
     '<,'>! sed 's/ \+/ /g'|sed 's/\s*$//g'
     normal gv=
@@ -267,7 +277,3 @@ let g:xtabline_settings.theme             = 'seoul'
 let g:xtabline_settings.enable_mappings   = 0
 let g:xtabline_settings.show_right_corner = 0
 let g:xtabline_lazy                       = 1
-
-"Vimpipe testing
-" set shellpipe =  "> /tmp/vimpipe"
-" set shell=/bin/bash
