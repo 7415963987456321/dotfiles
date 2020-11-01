@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/home/keli/code/julia'
+let g:netrw_dirhist_0='/home/keli/nam/grein/verkefni/verkefni7'
+let g:netrw_dirhist_9='/home/keli/code/julia'
+let g:netrw_dirhist_8='/home/keli/.config/nvim'
+let g:netrw_dirhist_7='/home/keli/.config/nvim/colors'
+let g:netrw_dirhist_6='/home/keli/code/julia'
+let g:netrw_dirhist_5='/home/keli/.config/nvim'
+let g:netrw_dirhist_4='/home/keli/code/julia'
+let g:netrw_dirhist_3='/home/keli/.config/nvim'
+let g:netrw_dirhist_2='/home/keli/.config/nvim/colors'
