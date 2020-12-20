@@ -14,10 +14,11 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-commentary'
     Plug 'lervag/vimtex'
     Plug 'junegunn/fzf.vim'
+    Plug 'mcchrish/nnn.vim'
     Plug 'machakann/vim-sandwich'
     Plug 'Shougo/deoplete.nvim'
-        Plug 'roxma/nvim-yarp'
-        Plug 'roxma/vim-hug-neovim-rpc'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
     Plug 'tpope/vim-vinegar'
     Plug 'junegunn/vim-peekaboo' " maybe
     Plug 'mg979/vim-xtabline'    " TESTING
@@ -78,10 +79,10 @@ set virtualedit+=block
 augroup Colors
     autocmd!
     autocmd ColorScheme fromthehell highlight IncSearch guibg=green ctermbg=green term=underline
-                \ | highlight Normal     ctermfg=23   ctermbg=0       cterm=NONE
-                \ | highlight Visual     ctermfg=NONE ctermbg=23      ctermfg=15
-                \ | highlight CursorLine ctermbg=NONE cterm=underline
-                \ | highlight MatchParen ctermfg=1    ctermbg=NONE    cterm=underline,bold
+                \ | highlight Normal     ctermfg=23    ctermbg=0       cterm=NONE
+                \ | highlight Visual     ctermfg=NONE  ctermbg=23      ctermfg=15
+                \ | highlight CursorLine ctermbg=NONE  cterm=underline
+                \ | highlight MatchParen ctermfg=1     ctermbg=NONE    cterm=underline,bold
                 \ | highlight Cursor     cterm=reverse
 colorscheme fromthehell
 
@@ -94,6 +95,7 @@ augroup END
 
 " Clipboard crap
 nnoremap <silent>zp "+p=`]
+vnoremap <silent>zp "+p=`]
 xnoremap zy "+y
 
 " netrw stillingar
@@ -148,7 +150,7 @@ nnoremap <silent> <leader>H <C-W><S-H>
 nnoremap <silent> <leader><Tab> gt
 nnoremap <silent> <leader>t     :Texplore<CR>
 
-"Scroll resize
+" Scroll resize
 nnoremap <C-ScrollWheelUp>   3<C-W>-
 nnoremap <C-ScrollWheelDown> 3<C-W>+
 
@@ -156,7 +158,7 @@ nnoremap <C-ScrollWheelDown> 3<C-W>+
 let g:deoplete#enable_at_startup = 1
 call deoplete#custom#var('clangx', 'clang_binary', '/usr/bin/clang')
 
-"Tab completion takki á tab
+" Tab completion takki á tab
 inoremap <expr> <Tab>   tabcomp#Tab_Or_Complete()
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -219,8 +221,10 @@ let g:vimtex_compiler_latexmk = {
         \ ],
 \}
 
+let g:AutoPairsShortcutToggle = ''
+
 " FUNCTIONS:
-" Strip extra whitespace.
+" Strip extra whitespace:
 function! Strip()
     '<,'>! sed 's/ \+/ /g'|sed 's/\s*$//g'
     normal gv=
@@ -271,3 +275,7 @@ let g:xtabline_lazy                       = 1
 "Vimpipe testing
 " set shellpipe =  "> /tmp/vimpipe"
 " set shell=/bin/bash
+"
+"
+set errorformat^=%f:%l:%c\ %m
+command! -nargs=1 Global lgetexpr filter(map(getline(1,'$'), {key, val -> expand("%") . ":" . (key + 1) . ":1 " . val }), { idx, val -> val =~ <q-args> })
