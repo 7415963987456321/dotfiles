@@ -57,7 +57,7 @@ hi DiffDelete     ctermfg=NONE ctermbg=235  cterm=NONE      guifg=NONE    guibg=
 hi ModeMsg        ctermfg=15   ctermbg=235  cterm=bold      guifg=#F9F9F9 guibg=#192224 guisp=#192224 gui=bold
 hi CursorColumn   ctermfg=NONE ctermbg=236  cterm=NONE      guifg=NONE    guibg=#222E30 guisp=#222E30 gui=NONE
 hi Define         ctermfg=1    ctermbg=NONE cterm=NONE      guifg=#BD9800 guibg=NONE    guisp=NONE    gui=NONE
-hi Function       ctermfg=241  ctermbg=NONE cterm=bold      guifg=#664c66 guibg=NONE    guisp=NONE    gui=bold
+hi Function       ctermfg=241  ctermbg=NONE cterm=underline      guifg=#664c66 guibg=NONE    guisp=NONE    gui=bold
 hi FoldColumn     ctermfg=235  ctermbg=248  cterm=NONE      guifg=#192224 guibg=#A1A6A8 guisp=#A1A6A8 gui=italic
 hi PreProc        ctermfg=214  ctermbg=NONE cterm=NONE      guifg=#ffbd2e guibg=NONE    guisp=NONE    gui=NONE
 hi Visual         ctermfg=235  ctermbg=189  cterm=NONE      guifg=#192224 guibg=#F9F9FF guisp=#F9F9FF gui=NONE

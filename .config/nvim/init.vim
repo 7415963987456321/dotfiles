@@ -10,22 +10,18 @@ call plug#begin('~/.vim/plugged')
     Plug 'itchyny/lightline.vim'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-dispatch'
+    Plug 'tpope/vim-vinegar'
     Plug 'lervag/vimtex'
     Plug 'junegunn/fzf.vim'
     Plug 'machakann/vim-sandwich'
-    Plug 'tpope/vim-vinegar'
-    Plug 'junegunn/vim-peekaboo' " maybe
     Plug 'mg979/vim-xtabline'    " TESTING
     Plug 'Krasjet/auto.pairs'
-    Plug 'JuliaEditorSupport/julia-vim'
     Plug 'nvim-treesitter/nvim-treesitter'
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
     Plug 'neovim/nvim-lspconfig'
     Plug 'nvim-lua/completion-nvim'
-    Plug 'nvim-lua/diagnostic-nvim'
-    Plug 'mbbill/undotree'
+    Plug 'romainl/vim-tinyMRU'
 call plug#end()
-lua require("init")
 
 filetype plugin indent on
 syntax   enable
@@ -75,17 +71,28 @@ set noshowmode
 set laststatus=2
 set formatoptions+=j
 set virtualedit+=block
+set autochdir
+set wildcharm=<C-z>
+set autoread
+set grepprg=rg\ --vimgrep
+set hidden
 
-" Colors (12, 15, 22, 23, 233?)
+" Colors (12, 15, 22, 23, 233? ugh..)
 augroup Colors
     autocmd!
     " Colorscheme overrides, put into colorscheme file later
     autocmd ColorScheme custard highlight IncSearch guibg=green ctermbg=green term=underline
-                \ | highlight Normal     ctermfg=23    ctermbg=0       cterm=NONE
-                \ | highlight Visual     cterm=NONE    ctermbg=23      ctermfg=15
+                \ | highlight Normal     ctermfg=15    ctermbg=0       cterm=NONE
+                \ | highlight Visual     cterm=NONE    ctermbg=22      ctermfg=15
                 \ | highlight CursorLine ctermbg=NONE  cterm=underline
+                \ | highlight Type       ctermfg=23    ctermbg=NONE    cterm=bold
+                \ | highlight Function   ctermfg=241   ctermbg=NONE    cterm=underline
                 \ | highlight MatchParen ctermfg=1     ctermbg=NONE    cterm=underline,bold
                 \ | highlight Cursor     cterm=reverse
+                \ | highlight LspDiagnosticsVirtualTextError       ctermbg=235
+                \ | highlight LspDiagnosticsVirtualTextWarning     ctermbg=234
+                \ | highlight LspDiagnosticsVirtualTextInformation ctermbg=233
+                \ | highlight LspDiagnosticsVirtualTextHint        ctermbg=232
 colorscheme custard
 
 " Wildmenu stuff
@@ -96,8 +103,14 @@ augroup Lowercasemenu
     autocmd CmdLineLeave : set smartcase
 augroup END
 
+"TinyMRU
+nnoremap <F5> :ME <C-z>
+
+"Buffers (testing)
+nnoremap <F4> :b <C-z>
+
 " Clipboard crap
-nnoremap <silent>zp "+p=`]
+noremap <silent>zp "+p=`]
 xnoremap zy "+y
 
 " netrw stillingar
@@ -109,10 +122,6 @@ let g:netrw_altv      = 1
 "Bölvað ANSI lyklaborð
 inoremap <C-b> <Bar>
 
-"Reload .vimrc
-command! Reload execute ":source $MYVIMRC"
-nnoremap ,r :Reload<CR>
-
 " Leader shortcuts
 let mapleader = " "
 nmap <silent> <leader>w :w<CR>
@@ -120,6 +129,7 @@ nmap <silent> <leader>q :q<CR>
 nmap <silent> <leader>o :Explore<CR>
 nmap <silent> <leader>v :Vexplore<CR>
 nmap <silent> <leader>b :Sex<CR>  " HUEHUEHUE
+
 
 " FZF settings
 let g:fzf_buffers_jump = 1
@@ -148,8 +158,7 @@ nnoremap <silent> <leader>L <C-W><S-L>
 nnoremap <silent> <leader>H <C-W><S-H>
 
 " Tab nav
-nnoremap <silent> <leader><Tab> gt
-nnoremap <silent> <leader>t     :Texplore<CR>
+nnoremap <silent> <leader>t :Texplore<CR>
 
 "Scroll resize
 nnoremap <C-ScrollWheelUp>   3<C-W>-
@@ -173,10 +182,18 @@ onoremap ar :normal va[<CR>
 " Join lines without cursor jangle
 nnoremap J mzJ`z
 
+" YankPaste (patent pending)
+nnoremap yp yyp
+
+" Repeatable dot
+nnoremap . :<C-u>execute "norm! " . repeat(".", v:count1)<CR>
+
 " Let Ctrl-L be expand for snippet
 let g:UltiSnipsExpandTrigger      = "<C-l>"
 let g:UltiSnipsSnippetDirectories = ['~/.vim/plugged/vim-snippets', 'vim-snippets']
 
+" Send to 0x0.st pastebin
+vnoremap <Leader>pb :w !curl -s -F "file=@-" https://0x0.st<CR>
 
 " Lightline customize colors later
 let g:lightline = {
@@ -191,27 +208,14 @@ let g:lightline.tabline = {
             \ 'left':  [ [ 'tabs' ] ],
             \ 'right': [ [ ''     ] ]  }
 
-" " ALE settings
-" let g:ale_set_highlights = 0
-" let g:ale_lint_on_save   = 1
-
-" Use K to show documentation in preview window.
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" function! s:show_documentation()
-"     if (index(['vim','help'], &filetype) >= 0)
-"         execute 'h '.expand('<cword>')
-"     else
-"         call CocAction('doHover')
-"     endif
-" endfunction
 
 "LaTeX stillingar
 let g:tex_flavor                 = 'latex'
 let g:vimtex_quickfix_mode       = 0
 let g:vimtex_fold_manual         = 1
-let g:vimtex_latexmk_continuous  = 1
-let g:vimtex_compiler_progname   = 'latexmk'
+" let g:vimtex_latexmk_continuous  = 1
+" was latexmk
+let g:vimtex_compiler_progname   = 'nvr'
 let g:vimtex_view_general_viewer = 'zathura'
 
 let g:vimtex_compiler_latexmk = {
@@ -228,16 +232,31 @@ let g:vimtex_compiler_latexmk = {
         \ ],
 \}
 
+" xcodetabline settings
+let g:xtabline_settings                   = {}
+let g:xtabline_settings.theme             = 'seoul'
+let g:xtabline_settings.enable_mappings   = 0
+let g:xtabline_settings.show_right_corner = 0
+let g:xtabline_lazy                       = 1
+
 " FUNCTIONS:
 function! Strip()
-    '<,'>! sed 's/ \+/ /g'|sed 's/\s*$//g'
+    '<,'>! sed 's/ \+/ /g; s/\s*$//g'
     normal gv=
 endfunction
 xnoremap <silent> R :<C-u>silent call Strip()<CR>
 
+" Split by char (needs rework)
+function! SB()
+     " '<,'>! sed 's/[ \t]*,/&\r/g'; 
+    '<,'>! sed 's/ \+/ /g' | sed 's/[ \t]*,/&\r/g'
+endfunction
+xnoremap <silent> <C-S> :<C-u>silent call SB()<CR>
+
+
 " Align, Strips trailing whitespace as well
 function! Align()
-    '<,'>!column -tL |sed 's/  \(\S\)/ \1/g' |sed 's/\s*$//g'
+    '<,'>!column -tL |sed 's/  \(\S\)/ \1/g' ;sed 's/\s*$//g'
     normal gv=
 endfunction
 xnoremap <silent> K :<C-u>silent call Align()<CR>
@@ -249,19 +268,18 @@ function! Break()
 endfunction
 nnoremap <CR> :<C-u>call Break()<CR>
 
+" COMMANDS:
+
+"Git Blame
+command! -range GB echo join(systemlist("git -C " . shellescape(expand('%:p:h')) . " blame -L <line1>,<line2> -cnw --date iso8601 " . expand('%:t')), "\n")
+
+"Reload .vimrc
+command! Reload execute ":source $MYVIMRC"
+nnoremap <leader>r :Reload<CR>
+
 " TESTING:
 
-" Send to ix.io pastebin
-vnoremap <Leader>pb :w !curl -F "f:1=<-" ix.io<CR>
-
-" xcodetabline settings
-let g:xtabline_settings                   = {}
-let g:xtabline_settings.theme             = 'seoul'
-let g:xtabline_settings.enable_mappings   = 0
-let g:xtabline_settings.show_right_corner = 0
-let g:xtabline_lazy                       = 1
-
-" LSP bindings
+" LSP bindings (needs work)
 nnoremap <silent> K         <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <leader>g <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> <leader>r <cmd>lua vim.lsp.buf.references()<CR>
@@ -269,27 +287,27 @@ nnoremap <silent> g0        <cmd>lua vim.lsp.buf.document_symbol()<CR>
 
 "LSP settings:
 autocmd BufEnter * lua require'completion'.on_attach()
-
-autocmd BufRead,BufNewFile *.jl :set filetype=julia
-autocmd Filetype julia setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype rust  setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype java  setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype vim   setlocal omnifunc=v:lua.vim.lsp.omnifunc
-
+autocmd Filetype rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
+autocmd Filetype java setlocal omnifunc=v:lua.vim.lsp.omnifunc
+autocmd Filetype vim  setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
 " Completion
-let g:completion_enable_auto_popup = 1
+let g:completion_enable_auto_popup  = 1
 let g:completion_auto_change_source = 1
-let g:completion_enable_snippet    = 'UltiSnips'
-let g:completion_enable_auto_paren = 1
-let g:completion_confirm_key       = "\<CR>"
+let g:completion_enable_snippet     = 'UltiSnips'
+let g:completion_enable_auto_paren  = 1
+let g:completion_confirm_key        = "\<CR>"
+
+lua require("init")
 
 " Lua stuff for LSP and tree-sitter (experimental)
 " luafile ~/.config/nvim/lua/init.lua
 " lua require("init")
 " The fuck is going on with this?
 
-" Diagnostics
-let g:diagnostic_insert_delay        = 1
-let g:diagnostic_show_sign           = 1
-let g:diagnostic_enable_virtual_text = 1
+" automatically rebalance windows on vim resize (from Nazar)
+autocmd VimResized * :wincmd =
+
+" For quickfix?
+nmap <silent> <Down> :cn<CR>
+nmap <silent> <Up>   :cp<CR>
