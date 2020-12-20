@@ -11,6 +11,7 @@ env:
   # You can verify this by checking for the presence of `smso` and `sitm` in
   # `infocmp xterm-256color`.
   TERM: xterm-256color
+  # LC_ALL: "LANG=is_IS.UTF-8"
 
 window:
   # Window dimensions in character columns and lines
@@ -20,6 +21,9 @@ window:
     columns: 0
     lines: 0
 
+  # Window padding (changes require restart)
+  # Blank space added around the window in pixels. This padding is scaled
+  # by DPI and the specified value is always added at both opposing sides.
   # Adds this many blank pixels of padding around the window
   # Units are physical pixels; this is not DPI aware.
   # (change requires restart)
@@ -29,13 +33,21 @@ window:
 
   # Window decorations
   # Setting this to false will result in window without borders and title bar.
-  #decorations: true
+  #decorations: full
 
-# Display tabs using this many cells (changes require restart)
-tabspaces: 4
+  # Allow terminal applications to change Alacritty's window title.
+  dynamic_title: true
 
 # When true, bold text is drawn using the bright variant of colors.
 draw_bold_text_with_bright_colors: true
+
+scrolling:
+  # Maximum number of lines in the scrollback buffer.
+  # Specifying '0' will disable scrolling.
+  history: 10000
+
+  # Scrolling distance multiplier.
+  multiplier: 3
 
 # Font configuration (changes require restart)
 #
@@ -57,21 +69,21 @@ draw_bold_text_with_bright_colors: true
 # * https://wiki.archlinux.org/index.php/font_configuration#Fontconfig_configuration
 # * file:///usr/share/doc/fontconfig/fontconfig-user.html
 font:
-  # The normal (roman) font face to use.
+  # The normal (roman) font face to use. (Usually Monoid, Liberation Mono?? or Hack?)
   normal:
-    family: Monoid # should be "Menlo" or something on macOS.
+    family: Monoid
     # Style can be specified to pick a specific face.
     # style: Regular
 
   # The bold font face
   bold:
-    family: Monoid # should be "Menlo" or something on macOS.
+    family: Monoid
     # Style can be specified to pick a specific face.
     # style: Bold
 
   # The italic font face
   italic:
-    family: Monoid # should be "Menlo" or something on macOS.
+    family: Monoid
     # Style can be specified to pick a specific face.
     # style: Italic
 
@@ -109,9 +121,8 @@ font:
 # and cursor.background colors, otherwise invert the colors of the cursor.
 #custom_cursor_colors: false
 
-# Colors (Tomorrow Night Bright)
+# Colors
 colors:
-  # Default colors
   primary:
     background: '0x000000'
     foreground: '0xeaeaea'
@@ -127,8 +138,20 @@ colors:
 
   # Colors the cursor will use if `custom_cursor_colors` is true
   cursor:
-    text: '0x000000'
-    cursor: '0xffffff'
+    # text: '0x000000'
+    # cursor: '0xffffff'
+  # Testing this:
+   text: CellBackground
+   cursor: CellForeground
+
+  # Selection colors
+  # Colors which should be used to draw the selection area.
+  #
+  # Allowed values are CellForeground and CellBackground, which reference the
+  # affected cell, or hexadecimal colors like #ff00ff.
+  selection:
+    text: CellBackground
+    background: CellForeground
 
   # Normal colors
   normal:
@@ -185,12 +208,12 @@ colors:
 #
 # To completely disable the visual bell, set its duration to 0.
 #
-visual_bell:
+bell:
   animation: EaseOutExpo
   duration: 0
 
 # Background opacity
-background_opacity: 1.0
+background_opacity:  1.0
 
 # Mouse bindings
 #
@@ -229,20 +252,23 @@ mouse:
   # To disable this completely, set `faux_scrollback_lines` to 0.
   faux_scrolling_lines: 3
 
+  hide_while_typing: true
+
 selection:
   semantic_escape_chars: ",│`|:\"' ()[]{}<>"
 
-dynamic_title: true
+window.dynamic_title: true
 
-mouse.hide_while_typing: false
-
-# Style of the cursor
-#
-# Values for 'cursor_style':
-# - Block
-# - Underline
-# - Beam
-cursor.style: Block
+cursor:
+  # Cursor style
+      # The shape of the cursor
+      #
+      # Values for `shape`:
+      #   - ▇ Block
+      #   - _ Underline
+      #   - | Beam
+  style: Block
+  #Blinking implemented later...
 
 # Whether the cursor should be a hollow block on window focus loss
 cursor.unfocused_hollow: true
@@ -256,7 +282,7 @@ live_config_reload: true
 # Entries in shell.args are passed unmodified as arguments to the shell.
 #
 # shell:
-#   program: /bin/bash
+#   program: /usr/bin/fish
 #   args:
 #     - --login
 
@@ -308,8 +334,8 @@ key_bindings:
   - { key: W,        mods: Command, action: Quit                         }
   - { key: Insert,   mods: Shift,   action: PasteSelection               }
   - { key: Key0,     mods: Control, action: ResetFontSize                }
-  - { key: Equals,   mods: Control, action: IncreaseFontSize             }
-  - { key: Subtract, mods: Control, action: DecreaseFontSize             }
+  - { key: Equals,   mods: Control, action: IncreaseFontSize             } #Plus sign??
+  - { key: Minus,    mods: Control, action: DecreaseFontSize             }
   - { key: Home,                    chars: "\x1bOH",   mode: AppCursor   }
   - { key: Home,                    chars: "\x1b[H",   mode: ~AppCursor  }
   - { key: End,                     chars: "\x1bOF",   mode: AppCursor   }
