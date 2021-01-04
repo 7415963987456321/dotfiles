@@ -14,7 +14,6 @@ call plug#begin('~/.vim/plugged')
     Plug 'lervag/vimtex'
     Plug 'junegunn/fzf.vim'
     Plug 'machakann/vim-sandwich'
-    Plug 'mg979/vim-xtabline'    " TESTING
     Plug 'Krasjet/auto.pairs'
     Plug 'nvim-treesitter/nvim-treesitter'
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
@@ -37,7 +36,7 @@ nnoremap // :noh<CR>
 inoremap <C-E> <ESC>])a
 
 " Visual
-xnoremap n :norm 
+xnoremap n :norm<space>
 xnoremap <C-J> }
 xnoremap <C-K> {
 nnoremap gG ggVG
@@ -50,7 +49,7 @@ set ignorecase
 set smartcase
 set relativenumber
 set number
-set tabstop=4
+set tabstop=8
 set expandtab
 set shiftwidth=4
 set smartindent
@@ -107,7 +106,7 @@ augroup END
 nnoremap <F5> :ME <C-z>
 
 "Buffers (testing)
-nnoremap <F4> :b <C-z>
+nnoremap <F4> :Buffers <CR>
 
 " Clipboard crap
 noremap <silent>zp "+p=`]
@@ -124,15 +123,16 @@ inoremap <C-b> <Bar>
 
 " Leader shortcuts
 let mapleader = " "
-nmap <silent> <leader>w :w<CR>
-nmap <silent> <leader>q :q<CR>
-nmap <silent> <leader>o :Explore<CR>
-nmap <silent> <leader>v :Vexplore<CR>
-nmap <silent> <leader>b :Sex<CR>  " HUEHUEHUE
-
+nmap     <silent> <leader>w :w<CR>
+nmap     <silent> <leader>q :q<CR>
+nmap     <silent> <leader>o :Explore<CR>
+nmap     <silent> <leader>v :Vexplore<CR>
+nmap     <silent> <leader>b :Sex<CR>      " HUEHUEHUE
+nnoremap <silent> <leader>t :Texplore<CR>
 
 " FZF settings
 let g:fzf_buffers_jump = 1
+let g:fzf_layout = {'down': '40%'}
 
 nmap <silent> <leader>fb :Buffers<CR>
 nmap <silent> <leader>ff :Files<CR>
@@ -143,8 +143,9 @@ nmap <silent> <leader>fw :Windows<CR>
 nmap <silent> <leader>fh :Helptags<CR>
 
 imap <c-x><c-l> <plug>(fzf-complete-buffer-line)
+
 command! -bang -nargs=? -complete=dir Files
-            \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+            \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--info=inline']}), <bang>0)
 
 " Split navigation
 nnoremap <silent> <leader>j <C-W><C-J>
@@ -157,8 +158,6 @@ nnoremap <silent> <leader>K <C-W><S-K>
 nnoremap <silent> <leader>L <C-W><S-L>
 nnoremap <silent> <leader>H <C-W><S-H>
 
-" Tab nav
-nnoremap <silent> <leader>t :Texplore<CR>
 
 "Scroll resize
 nnoremap <C-ScrollWheelUp>   3<C-W>-
@@ -232,15 +231,9 @@ let g:vimtex_compiler_latexmk = {
         \ ],
 \}
 
-" xcodetabline settings
-let g:xtabline_settings                   = {}
-let g:xtabline_settings.theme             = 'seoul'
-let g:xtabline_settings.enable_mappings   = 0
-let g:xtabline_settings.show_right_corner = 0
-let g:xtabline_lazy                       = 1
-
 " FUNCTIONS:
 function! Strip()
+    " (/^\s+|\s+$/g, '')
     '<,'>! sed 's/ \+/ /g; s/\s*$//g'
     normal gv=
 endfunction
@@ -248,15 +241,16 @@ xnoremap <silent> R :<C-u>silent call Strip()<CR>
 
 " Split by char (needs rework)
 function! SB()
-     " '<,'>! sed 's/[ \t]*,/&\r/g'; 
-    '<,'>! sed 's/ \+/ /g' | sed 's/[ \t]*,/&\r/g'
+    " let c = getchar()
+    " '<,'>! sed 's/[ \t]*=/&\n/g';
+    '<,'>! sed 's/ \+/ /g' | sed 's/[ \t]*,/&\n/g'
 endfunction
 xnoremap <silent> <C-S> :<C-u>silent call SB()<CR>
 
 
 " Align, Strips trailing whitespace as well
 function! Align()
-    '<,'>!column -tL |sed 's/  \(\S\)/ \1/g' ;sed 's/\s*$//g'
+    '<,'>!column -tL |sed 's/  \(\S\)/ \1/g' |sed 's/\s*$//g'
     normal gv=
 endfunction
 xnoremap <silent> K :<C-u>silent call Align()<CR>
@@ -266,7 +260,7 @@ function! Break()
     s/^\(\s*\)\(.\{-}\)\(\s*\)\(\%#\)\(\s*\)\(.*\)/\1\2\r\1\4\6
     call histdel("/", -1)
 endfunction
-nnoremap <CR> :<C-u>call Break()<CR>
+nnoremap <expr> <silent> <CR> &modifiable ? ":<C-u>call Break()<CR>" : "<CR>"
 
 " COMMANDS:
 
