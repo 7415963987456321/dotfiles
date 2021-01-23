@@ -20,6 +20,9 @@ call plug#begin('~/.vim/plugged')
     Plug 'neovim/nvim-lspconfig'
     Plug 'nvim-lua/completion-nvim'
     Plug 'romainl/vim-tinyMRU'
+    Plug 'romainl/vim-qf'
+    Plug 'romainl/vim-cool'
+    Plug 'mcchrish/nnn.vim'
 call plug#end()
 
 filetype plugin indent on
@@ -33,7 +36,7 @@ set pyxversion=3
 inoremap jj <ESC>
 nnoremap Q @@
 nnoremap // :noh<CR>
-inoremap <C-E> <ESC>])a
+inoremap <C-E> <ESC>%%a
 
 " Visual
 xnoremap n :norm<space>
@@ -68,26 +71,21 @@ set listchars=trail:␣,extends:→,tab:>\
 set backspace=indent,eol,start
 set noshowmode
 set laststatus=2
-set formatoptions+=j
+set formatoptions+=j "(remember to add t for latex and txt files)
 set virtualedit+=block
 set autochdir
 set wildcharm=<C-z>
 set autoread
-set grepprg=rg\ --vimgrep
+" set grepprg=rg\ --vimgrep
 set hidden
 
-" Colors (12, 15, 22, 23, 233? ugh..)
+" Colors (12, 15, 22, 23, 24? ugh..)
 augroup Colors
     autocmd!
     " Colorscheme overrides, put into colorscheme file later
     autocmd ColorScheme custard highlight IncSearch guibg=green ctermbg=green term=underline
-                \ | highlight Normal     ctermfg=15    ctermbg=0       cterm=NONE
-                \ | highlight Visual     cterm=NONE    ctermbg=22      ctermfg=15
-                \ | highlight CursorLine ctermbg=NONE  cterm=underline
-                \ | highlight Type       ctermfg=23    ctermbg=NONE    cterm=bold
-                \ | highlight Function   ctermfg=241   ctermbg=NONE    cterm=underline
-                \ | highlight MatchParen ctermfg=1     ctermbg=NONE    cterm=underline,bold
-                \ | highlight Cursor     cterm=reverse
+                \ | highlight Normal                               ctermfg=12    ctermbg=0       cterm=NONE
+                \ | highlight MatchParen                           ctermfg=1     ctermbg=NONE    cterm=underline,bold
                 \ | highlight LspDiagnosticsVirtualTextError       ctermbg=235
                 \ | highlight LspDiagnosticsVirtualTextWarning     ctermbg=234
                 \ | highlight LspDiagnosticsVirtualTextInformation ctermbg=233
@@ -101,6 +99,12 @@ augroup Lowercasemenu
     autocmd CmdLineEnter : set nosmartcase
     autocmd CmdLineLeave : set smartcase
 augroup END
+
+" Format written text differently for latex and txt files (fix this tomorrow )
+" augroup Formattxt
+"     autocmd!
+"     autocmd FileType *.tex,*.txt setlocal formatoptions+=t
+" augroup END
 
 "TinyMRU
 nnoremap <F5> :ME <C-z>
@@ -158,6 +162,12 @@ nnoremap <silent> <leader>K <C-W><S-K>
 nnoremap <silent> <leader>L <C-W><S-L>
 nnoremap <silent> <leader>H <C-W><S-H>
 
+" Automatically rebalance windows on vim resize (from Nazar)
+augroup window_resize
+    autocmd!
+    autocmd VimResized * :wincmd =
+augroup END
+
 
 "Scroll resize
 nnoremap <C-ScrollWheelUp>   3<C-W>-
@@ -182,17 +192,28 @@ onoremap ar :normal va[<CR>
 nnoremap J mzJ`z
 
 " YankPaste (patent pending)
-nnoremap yp yyp
+nnoremap yp yyp=k
 
 " Repeatable dot
 nnoremap . :<C-u>execute "norm! " . repeat(".", v:count1)<CR>
+
+" Buffer stuffer
+nnoremap <Right> :bn<CR>
+nnoremap <right> :bp<CR>
 
 " Let Ctrl-L be expand for snippet
 let g:UltiSnipsExpandTrigger      = "<C-l>"
 let g:UltiSnipsSnippetDirectories = ['~/.vim/plugged/vim-snippets', 'vim-snippets']
 
-" Send to 0x0.st pastebin
-vnoremap <Leader>pb :w !curl -s -F "file=@-" https://0x0.st<CR>
+" Send to 0x0.st pastebin and clipboard
+" vnoremap <Leader>pb :w !curl -s -F "file=@-" https://0x0.st<CR>
+vnoremap <Leader>pb :Paste0x0<CR>
+function! PB(line1, line2) abort
+    let  @+ = substitute(system(printf('curl -s -F "file=@-" https://0x0.st/'),
+               \ join(getline(a:line1, a:line2), "\n")), "\n$", "", "")
+    let @@ = @+
+endfunction
+command! -range=% Paste0x0 call PB(<line1>, <line2>)
 
 " Lightline customize colors later
 let g:lightline = {
@@ -210,10 +231,11 @@ let g:lightline.tabline = {
 
 "LaTeX stillingar
 let g:tex_flavor                 = 'latex'
+let g:vimtex_quickfix_autojump   = 0
 let g:vimtex_quickfix_mode       = 0
 let g:vimtex_fold_manual         = 1
 " let g:vimtex_latexmk_continuous  = 1
-" was latexmk
+" was latexmk (investigate)
 let g:vimtex_compiler_progname   = 'nvr'
 let g:vimtex_view_general_viewer = 'zathura'
 
@@ -280,10 +302,13 @@ nnoremap <silent> <leader>r <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0        <cmd>lua vim.lsp.buf.document_symbol()<CR>
 
 "LSP settings:
-autocmd BufEnter * lua require'completion'.on_attach()
-autocmd Filetype rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype java setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype vim  setlocal omnifunc=v:lua.vim.lsp.omnifunc
+augroup LSP
+    autocmd!
+    autocmd! BufEnter * lua require'completion'.on_attach()
+    autocmd! Filetype rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
+    autocmd! Filetype java setlocal omnifunc=v:lua.vim.lsp.omnifunc
+    autocmd! Filetype vim  setlocal omnifunc=v:lua.vim.lsp.omnifunc
+augroup END
 
 " Completion
 let g:completion_enable_auto_popup  = 1
@@ -299,9 +324,28 @@ lua require("init")
 " lua require("init")
 " The fuck is going on with this?
 
-" automatically rebalance windows on vim resize (from Nazar)
-autocmd VimResized * :wincmd =
+" Reload config on save
+augroup reload_config
+    autocmd!
+    autocmd! BufWritePost $MYVIMRC nested source %
+augroup END
 
-" For quickfix?
-nmap <silent> <Down> :cn<CR>
-nmap <silent> <Up>   :cp<CR>
+" QUICKFIX:
+" " For quickfix? (vim-qf) (TESTING)
+" nmap <silent> <Down> :cn<CR>
+" nmap <silent> <Up>   :cp<CR>
+
+" Select in the quickfix list
+nmap <Up>   <Plug>(qf_qf_previous)
+nmap <Down> <Plug>(qf_qf_next)
+
+" Jump to qflist
+nmap <leader>c <Plug>(qf_qf_switch)
+
+" Toggle quickfixlist
+nmap <F1> <Plug>(qf_qf_toggle)
+
+" Mappings
+let g:qf_auto_quit          = 0
+let g:qf_mapping_ack_style  = 1
+let g:qf_auto_open_quickfix = 0
