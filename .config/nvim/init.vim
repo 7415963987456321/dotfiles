@@ -23,6 +23,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'romainl/vim-qf'
     Plug 'romainl/vim-cool'
     Plug 'mcchrish/nnn.vim'
+    Plug 'editorconfig/editorconfig-vim'
 call plug#end()
 
 filetype plugin indent on
@@ -35,7 +36,7 @@ set pyxversion=3
 " Basic stillingar
 inoremap jj <ESC>
 nnoremap Q @@
-nnoremap // :noh<CR>
+" nnoremap // :noh<CR> " Use vim-cool instead
 inoremap <C-E> <ESC>%%a
 
 " Visual
@@ -100,7 +101,13 @@ augroup Lowercasemenu
     autocmd CmdLineLeave : set smartcase
 augroup END
 
-" Format written text differently for latex and txt files (fix this tomorrow )
+" ignores
+set wildignore+=*.swp*.class,*.cache
+set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+set wildignore+=*.tar.*
+
+" Format written text differently for latex and txt files (fix this tomorrow
+" or never )
 " augroup Formattxt
 "     autocmd!
 "     autocmd FileType *.tex,*.txt setlocal formatoptions+=t
@@ -123,15 +130,16 @@ let g:netrw_liststyle = 2
 let g:netrw_altv      = 1
 
 "Bölvað ANSI lyklaborð
-inoremap <C-b> <Bar>
+" inoremap <C-b> <Bar>
+inoremap <C-b> ^
 
 " Leader shortcuts
 let mapleader = " "
 nmap     <silent> <leader>w :w<CR>
 nmap     <silent> <leader>q :q<CR>
 nmap     <silent> <leader>o :Explore<CR>
-nmap     <silent> <leader>v :Vexplore<CR>
-nmap     <silent> <leader>b :Sex<CR>      " HUEHUEHUE
+nmap     <silent> <leader>v :Vexplore<CR>:bp<CR>
+nmap     <silent> <leader>b :Sex<CR>:bp<CR>     " HUEHUEHUE
 nnoremap <silent> <leader>t :Texplore<CR>
 
 " FZF settings
@@ -169,7 +177,7 @@ augroup window_resize
 augroup END
 
 
-"Scroll resize
+"Scroll resize (broken, thanks tmux)
 nnoremap <C-ScrollWheelUp>   3<C-W>-
 nnoremap <C-ScrollWheelDown> 3<C-W>+
 
@@ -198,8 +206,8 @@ nnoremap yp yyp=k
 nnoremap . :<C-u>execute "norm! " . repeat(".", v:count1)<CR>
 
 " Buffer stuffer
-nnoremap <Right> :bn<CR>
-nnoremap <right> :bp<CR>
+nnoremap <silent><Right> :bn<CR>
+nnoremap <silent><Left>  :bp<CR>
 
 " Let Ctrl-L be expand for snippet
 let g:UltiSnipsExpandTrigger      = "<C-l>"
@@ -294,6 +302,9 @@ command! Reload execute ":source $MYVIMRC"
 nnoremap <leader>r :Reload<CR>
 
 " TESTING:
+" Output to pdf (for code and other stuff):
+" :hardcopy > %.ps | !ps2pdf %.ps && rm %.ps
+command! HC execute ":hardcopy > %.ps | !ps2pdf %.ps && rm %.ps"
 
 " LSP bindings (needs work)
 nnoremap <silent> K         <cmd>lua vim.lsp.buf.hover()<CR>
