@@ -1,0 +1,51 @@
+[core]
+    pager = delta
+    editor = "nvim"
+[user]
+    email = hrs70@hi.is
+    name = 7415963987456321
+[pull]
+    ff = only
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+[credential]
+    helper = store
+[color]
+    branch = auto
+    diff = auto
+    status = auto
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+[color "diff"]
+    meta = yellow
+    frag = white
+    old = red
+    new = green
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+[color "blame"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    features = side-by-side line-numbers decorations
+    whitespace-error-style = 22 reverse
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+
+[alias]
+    gaga = log --all --graph --decorate --oneline
