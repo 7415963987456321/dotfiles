@@ -65,6 +65,7 @@ export SWAY_CURSOR_THEME=whiteglass
 export _JAVA_AWT_WM_NONREPARENTING=1
 export LANG=is_IS.UTF-8
 export FZF_DEFAULT_COMMAND='fd --type f'
+# export PATH='$PATH:/home/keli/.local/bin'
 
 set -xU LESS_TERMCAP_md (printf "\e[01;31m")
 set -xU LESS_TERMCAP_me (printf "\e[0m")
@@ -116,22 +117,23 @@ set -xU LESS_TERMCAP_us (printf "\e[01;32m")
 
 # Git stöff
 alias ga='git add'
+alias gap='git add -p'
 alias gc='git checkout'
 alias gcm='git checkout master'
 alias gb='git branch'
 alias gs='git status'
 alias gl='git log'
 alias gd='git diff'
+alias gw='git whatchanged'
 
-# Hacky media 
+# Hacky media
 alias mus='n /run/media/keli/TunaFish/Music'
 
 # Networking
 export KELI_SERVER=keli@192.168.1.102
 export SSH_PORT=1337
 alias server='ssh -p $SSH_PORT $KELI_SERVER'
-alias whoami="whoami && curl ident.me"
-
+alias whoami="whoami && curl ifconfig.co && ip route get 1 | awk '{printf \$7;}'"
 # Goddamnit fish-shell, just support IGNOREEOF
 bind \cd\cd\cd delete-or-exit
 
