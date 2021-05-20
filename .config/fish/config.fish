@@ -100,8 +100,6 @@ alias yt='~/.config/fish/scripts/yt.sh'
 alias journalctl='journalctl -xe'
 alias nb='newsboat'
 
-#pastebin
-alias pb='curl -F \'file=@-\' https://0x0.st'
 
 # Coloring
 alias ip='ip       --color=auto'
@@ -138,4 +136,15 @@ alias whoami="whoami && curl ifconfig.co && ip route get 1 | awk '{printf \$7;}'
 # Goddamnit fish-shell, just support IGNOREEOF
 bind \cd\cd\cd delete-or-exit
 
+# Goddamnit fish, what is this bullshit
+function fish_command_not_found
+    __fish_default_command_not_found_handler $argv
+end
+
+# Throw file to pastebin
+function pb
+    if set -q argv[1]
+        curl -F "file=@$argv[1]" https://0x0.st
+    end
+end
 
