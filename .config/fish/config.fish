@@ -59,13 +59,14 @@ end
 
 ### EXPORTS
 export NNN_USE_EDITOR=1
-export EDITOR=vim
+export EDITOR=nvim
 export XKB_DEFAULT_LAYOUT=is
 export SWAY_CURSOR_THEME=whiteglass
 export _JAVA_AWT_WM_NONREPARENTING=1
 export LANG=is_IS.UTF-8
 export FZF_DEFAULT_COMMAND='fd --type f'
 # export PATH='$PATH:/home/keli/.local/bin'
+export SYSTEMD_EDITOR=/usr/bin/nvim
 
 set -xU LESS_TERMCAP_md (printf "\e[01;31m")
 set -xU LESS_TERMCAP_me (printf "\e[0m")
@@ -86,6 +87,7 @@ alias Syu='sudo pacman -Syu'
 alias S='sudo pacman -S'
 alias R='sudo pacman -R'
 alias lsa='exa -abghHlS'
+alias tree='exa -T'
 alias ls='exa'
 alias nv='nvim'
 alias cl='clear'
@@ -99,7 +101,7 @@ alias clone='~/.config/fish/scripts/clone.sh'
 alias yt='~/.config/fish/scripts/yt.sh'
 alias journalctl='journalctl -xe'
 alias nb='newsboat'
-
+alias sc='systemctl'
 
 # Coloring
 alias ip='ip       --color=auto'
@@ -124,14 +126,19 @@ alias gl='git log --stat'
 alias gll='git log -p'
 alias gd='git diff'
 alias gw='git whatchanged'
+alias gi='cat (eval git rev-parse --show-toplevel)/.gitignore'
 
 # Hacky media
 alias mus='n /run/media/keli/TunaFish/Music'
 
 # Networking
-export KELI_SERVER=keli@192.168.1.102
+export KELI_SERVER=keli@192.168.0.107
 export SSH_PORT=1337
+export SERVER_MAC=6c:62:6d:85:f2:a5 b
+export PI=keli@192.168.0.107
 alias server='ssh -p $SSH_PORT $KELI_SERVER'
+alias wake='wol $SERVER_MAC'
+
 alias whoami="whoami && curl ifconfig.co && ip route get 1 | awk '{printf \$7;}'"
 # Goddamnit fish-shell, just support IGNOREEOF
 bind \cd\cd\cd delete-or-exit
@@ -148,3 +155,25 @@ function pb
     end
 end
 
+
+
+function fish_prompt -d "Prompt with jobs indicator"
+    set -l user_char '>'
+    if fish_is_root_user
+        set user_char '#'
+    end
+    # Number of background jobs in shell
+    if test -z "$last_pid"
+        printf (set_color blue)'[%s] ' (jobs | wc -l)
+    end
+    # if set -l job_count (jobs | wc -l) && test -n (jobs -lp)
+    #     printf (set_color blue)'[%s] ' $job_count
+    # end
+    # Prompt
+    set_color red
+    printf '%s@%s %s%s%s %s ' $USER (set_color blue)$hostname \
+        (set_color $fish_color_cwd) (prompt_pwd) (set_color red) $user_char
+end
+
+
+# source ~/.config/fish/scripts/fzf-config.fish
