@@ -49,3 +49,18 @@
 
 [alias]
     gaga = log --all --graph --decorate --oneline
+    tree = log --graph --pretty=format:'%Cred%h%Creset%n' --abbrev-commit --date=relative --branches --all
+    ll   = log --oneline
+    note = notes
+
+[instaweb]
+    local = true
+    httpd = lighttpd -f
+    port = 4321
+    browser = firefox
+[diff]
+    colorMoved = zebra
+[log]
+    abbrevCommit = true
+[notes]
+    rewriteRef = refs/notes/commits
