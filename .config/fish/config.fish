@@ -98,6 +98,7 @@ alias mu='mupdf'
 alias gt='gotop'
 alias wttr='curl -s \'wttr.in/Reykjavik?M\''
 alias clone='~/.config/fish/scripts/clone.sh'
+alias wg-switch='~/.config/fish/scripts/wg-switch.sh'
 alias yt='~/.config/fish/scripts/yt.sh'
 alias journalctl='journalctl -xe'
 alias nb='newsboat'
@@ -116,6 +117,7 @@ set -xU LESS_TERMCAP_ue (printf "\e[0m")
 set -xU LESS_TERMCAP_us (printf "\e[01;32m")
 
 # Git stöff
+alias g='git'
 alias ga='git add'
 alias gap='git add -p'
 alias gc='git checkout'
@@ -123,7 +125,7 @@ alias gcm='git checkout master'
 alias gb='git branch'
 alias gs='git status'
 alias gl='git log --stat'
-alias gll='git log -p'
+alias glp='git log -p'
 alias gd='git diff'
 alias gw='git whatchanged'
 alias gi='cat (eval git rev-parse --show-toplevel)/.gitignore'
@@ -146,6 +148,19 @@ bind \cd\cd\cd delete-or-exit
 # Goddamnit fish, what is this bullshit
 function fish_command_not_found
     __fish_default_command_not_found_handler $argv
+end
+
+#mkdir and cd
+function mkdir -d "Create a dir and set CWD"
+    command mkdir $argv
+    if test $status = 0
+        switch $argv[(count $argv)]
+            case '-*'
+            case '*'
+                cd $argv[(count $argv)]
+                return
+        end
+    end
 end
 
 # Throw file to pastebin
