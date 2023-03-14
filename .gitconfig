@@ -49,9 +49,11 @@
 
 [alias]
     gaga = log --all --graph --decorate --oneline
-    tree = log --graph --pretty=format:'%Cred%h%Creset%n' --abbrev-commit --date=relative --branches --all
+    tree = log --graph --date=relative --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset'
     ll   = log --oneline
     note = notes
+    ignore = update-index --skip-worktree
+    unignore = update-index --no-skip-worktree
 
 [instaweb]
     local = true
@@ -64,3 +66,8 @@
     abbrevCommit = true
 [notes]
     rewriteRef = refs/notes/commits
+[merge]
+    conflictstyle = diff3
+    tool = nvimdiff
+[mergetool "nvimdiff"]
+    cmd = nvim -d \"$LOCAL\" \"$MERGED\" \"$BASE\" \"$REMOTE\" -c \"wincmd w\" -c \"wincmd J\"
