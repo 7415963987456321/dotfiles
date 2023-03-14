@@ -67,6 +67,7 @@ export LANG=is_IS.UTF-8
 export FZF_DEFAULT_COMMAND='fd --type f'
 # export PATH='$PATH:/home/keli/.local/bin'
 export SYSTEMD_EDITOR=/usr/bin/nvim
+export LESS='--mouse --wheel-lines 4'
 
 set -xU LESS_TERMCAP_md (printf "\e[01;31m")
 set -xU LESS_TERMCAP_me (printf "\e[0m")
@@ -122,7 +123,7 @@ alias ga='git add'
 alias gap='git add -p'
 alias gc='git checkout'
 alias gcm='git checkout master'
-alias gb='git branch'
+alias gb='git branch -vv'
 alias gs='git status'
 alias gl='git log --stat'
 alias glp='git log -p'
