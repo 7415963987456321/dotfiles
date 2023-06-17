@@ -15,15 +15,24 @@ call plug#begin('~/.vim/plugged')
     Plug 'junegunn/fzf.vim'
     Plug 'machakann/vim-sandwich'
     Plug 'Krasjet/auto.pairs'
-    Plug 'nvim-treesitter/nvim-treesitter'
+    Plug 'nvim-treesitter/nvim-treesitter', {'do' : ':TSUpdate'}
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
     Plug 'neovim/nvim-lspconfig'
-    Plug 'nvim-lua/completion-nvim'
+    " Plug 'nvim-lua/completion-nvim'
     Plug 'romainl/vim-tinyMRU'
     Plug 'romainl/vim-qf'
     Plug 'romainl/vim-cool'
-    Plug 'mcchrish/nnn.vim'
+    Plug 'luukvbaal/nnn.nvim'
     Plug 'editorconfig/editorconfig-vim'
+    Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+    " Completion test
+    Plug 'hrsh7th/nvim-cmp'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    Plug 'hrsh7th/nvim-cmp'
+    Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 call plug#end()
 
 filetype plugin indent on
@@ -32,12 +41,14 @@ runtime  macros/matchit.vim
 
 " Fokking python rusl
 set pyxversion=3
+let g:python3_host_prog = '/usr/bin/python3' " -------- Set python 3 provider
 
 " Basic stillingar
 inoremap jj <ESC>
 nnoremap Q @@
 " nnoremap // :noh<CR> " Use vim-cool instead
 inoremap <C-E> <ESC>%%a
+nnoremap zz zz0
 
 " Visual
 xnoremap n :norm<space>
@@ -85,7 +96,7 @@ augroup Colors
     autocmd!
     " Colorscheme overrides, put into colorscheme file later
     autocmd ColorScheme custard highlight IncSearch guibg=green ctermbg=green term=underline
-                \ | highlight Normal                               ctermfg=12    ctermbg=0       cterm=NONE
+                \ | highlight Normal                               ctermfg=12    ctermbg=NONE       cterm=NONE
                 \ | highlight MatchParen                           ctermfg=1     ctermbg=NONE    cterm=underline,bold
                 \ | highlight LspDiagnosticsVirtualTextError       ctermbg=235
                 \ | highlight LspDiagnosticsVirtualTextWarning     ctermbg=234
@@ -141,6 +152,7 @@ nmap     <silent> <leader>o :Explore<CR>
 nmap     <silent> <leader>v :Vexplore<CR>:bp<CR>
 nmap     <silent> <leader>b :Sex<CR>:bp<CR>     " HUEHUEHUE
 nnoremap <silent> <leader>t :Texplore<CR>
+nnoremap <silent> <leader><ESC> :b#<bar>bd#<CR>
 
 " FZF settings
 let g:fzf_buffers_jump = 1
@@ -306,16 +318,16 @@ nnoremap <leader>r :Reload<CR>
 " :hardcopy > %.ps | !ps2pdf %.ps && rm %.ps
 command! HC execute ":hardcopy > %.ps | !ps2pdf %.ps && rm %.ps"
 
-" LSP bindings (needs work)
-nnoremap <silent> K         <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <leader>g <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> <leader>r <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> g0        <cmd>lua vim.lsp.buf.document_symbol()<CR>
+" LSP bindings (needs work) // uncommenting for now due to bugs
+" nnoremap <silent> K         <cmd>lua vim.lsp.buf.hover()<CR>
+" nnoremap <silent> <leader>g <cmd>lua vim.lsp.buf.definition()<CR>
+" nnoremap <silent> <leader>r <cmd>lua vim.lsp.buf.references()<CR>
+" nnoremap <silent> g0        <cmd>lua vim.lsp.buf.document_symbol()<CR>
 
 "LSP settings:
 augroup LSP
     autocmd!
-    autocmd! BufEnter * lua require'completion'.on_attach()
+    " autocmd! BufEnter * lua require'completion'.on_attach()
     autocmd! Filetype rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
     autocmd! Filetype java setlocal omnifunc=v:lua.vim.lsp.omnifunc
     autocmd! Filetype vim  setlocal omnifunc=v:lua.vim.lsp.omnifunc
@@ -345,6 +357,11 @@ augroup END
 " " For quickfix? (vim-qf) (TESTING)
 " nmap <silent> <Down> :cn<CR>
 " nmap <silent> <Up>   :cp<CR>
+
+" Commentary fixes
+augroup Commentary
+    autocmd FileType c,cpp setlocal commentstring=//\ %s
+augroup END
 
 " Select in the quickfix list
 nmap <Up>   <Plug>(qf_qf_previous)

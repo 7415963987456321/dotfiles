@@ -66,6 +66,8 @@
     abbrevCommit = true
 [notes]
     rewriteRef = refs/notes/commits
+[rebase]
+    autosquash = true
 [merge]
     conflictstyle = diff3
     tool = nvimdiff
